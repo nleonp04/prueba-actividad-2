@@ -25,10 +25,27 @@ jobs:
           cache: 'npm'
       - name: Instalar dependencias
         run: npm ci
+      - name: Instalar adaptador estatico
+        run: npm install -D @sveltejs/adapter-static
+      - name: Configurar adaptador estatico
+        run: |
+          cat > svelte.config.js << 'EOF'
+          import adapter from '@sveltejs/adapter-static';
+          export default {
+            kit: {
+              adapter: adapter({
+                pages: 'build',
+                assets: 'build',
+                fallback: null
+              }),
+              paths: {
+                base: '/prueba-actividad-2'
+              }
+            }
+          };
+          EOF
       - name: Compilar el proyecto
         run: npm run build
-      - name: Ver carpetas generadas
-        run: ls -la
       - name: Configurar GitHub Pages
         uses: actions/configure-pages@v5
         with:
@@ -36,7 +53,7 @@ jobs:
       - name: Empaquetar archivos para Pages
         uses: actions/upload-pages-artifact@v3
         with:
-          path: './dist'
+          path: './build'
   deploy:
     name: Deploy a GitHub Pages
     needs: build
