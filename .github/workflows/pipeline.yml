@@ -23,6 +23,18 @@ jobs:
       - name: Checkout del repositorio
         uses: actions/checkout@v4
 
+      - name: Configurar Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Instalar dependencias
+        run: npm ci
+
+      - name: Compilar el proyecto
+        run: npm run build
+
       - name: Configurar GitHub Pages
         uses: actions/configure-pages@v5
         with:
@@ -31,7 +43,7 @@ jobs:
       - name: Empaquetar archivos para Pages
         uses: actions/upload-pages-artifact@v3
         with:
-          path: '.'
+          path: './build'
 
   deploy:
     name: Deploy a GitHub Pages
